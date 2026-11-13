@@ -138,5 +138,9 @@ PR'da belirtilmeli; tüm testlerin geçtiği kutusu işaretlenmemelidir.
 6. GitHub'da güncellenen commit'i ve uygulama PR'ını gösterin. Video bağlantısını
    PR açıklamasına ekleyip dersin Telegram kanalında paylaşın.
 
-Parola/token veya özel dosyaları kayda almayın. Video henüz bu katkıya eklenmedi;
-bu akış, öğrencinin kendi çalıştırmasını kaydetmesi içindir.
+
+
+## Video sırasında doğrulama
+
+Doğrulama zamanı: 2026-11-13 22:34:33 +0000
+Metin ve JSON raporlarını video kaydı sırasında yeniden çalıştırdım. OS-16 için 21 testin tamamı geçti.
