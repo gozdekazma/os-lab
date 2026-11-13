@@ -28,14 +28,28 @@ Otomatik testler hem başarılı hem hatalı komut çıktılarıyla davranışı
 - Rezervasyon PR'ı ile çalışan uygulamanın PR'ı farklı amaçlara hizmet eder.
 - Aynı dala yeni commit gönderildiğinde açık PR güncellenir; tekrar PR açılmaz.
 
-## Destek ve kalan öğrenci doğrulaması
+## Linux labında gözlemlenen sonuçlar
+
+Paylaşılan terminal çıktıları Ubuntu 26.04.1 LTS, `7.0.0-30-generic` kernel
+ve `x86_64` mimarisini doğruladı. Metin ve JSON raporları çalıştı. İlk raporda
+eksik görünen `inxi` kurulduktan sonra bütün komutlar `ok`, veri toplama durumu
+`complete` oldu. Araç 197 servis içinde başarısız olan
+`systemd-networkd-wait-online.service` servisini gösterdi.
+
+Test hazırlığında eksik `python3.14-venv` paketi nedeniyle sanal ortam
+oluşturulamıyordu; paket kurularak bu aşama düzeltildi. Son genel kontrolde
+Android/lab grubunda 195 test geçti, web-ui testinde 1 hata kaldı; Source Lab'da
+176 test geçti. Cleanup Lab'ın relocation/safety testlerinde de hatalar kaldı.
+OS-16'ya ait başarısız test listelenmedi. Ayrıntılar [VERIFY.md](VERIFY.md) içindedir;
+genel repo kontrolünün tamamen geçtiği iddia edilmemektedir.
+
+## Destek ve kalan öğrenci değerlendirmesi
 
 Kod, testler ve belge taslağı ChatGPT desteğiyle hazırlanmıştır. Bu bölüm kişisel
-öğrenme beyanı yerine geçmez. Gözde kendi labında çalıştırdıktan sonra aşağıdaki
-alanları kendi deneyimine göre tamamlamalı ve metni gözden geçirmelidir:
+öğrenme beyanı yerine geçmez. Yukarıdaki gözlemler paylaşılan gerçek terminal
+kayıtlarına dayanır. Gözde aşağıdaki alanları kendi deneyimine göre tamamlamalı
+ve metni gözden geçirmelidir:
 
-- Kullandığım Linux dağıtımı ve mimarisi: **henüz kaydedilmedi**.
-- Çalıştırmada gözlemlediğim sonuç / karşılaştığım sorun: **henüz kaydedilmedi**.
 - Git/PR sürecinde öğrendiğim şey ve bunu nasıl kullandığım: **henüz yazılmadı**.
 - 2–4 dakikalık kanıt videosu: **henüz eklenmedi**.
 
