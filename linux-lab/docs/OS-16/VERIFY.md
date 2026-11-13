@@ -50,7 +50,34 @@ oluşturabilir; o durumda ilk komutta `.venv-test/bin/python` kullanılabilir.
 Eksik komut, timeout, izin hatası, bozuk çıktı, başarısız servis ve systemd'siz
 ortam senaryoları test edilir. `lat` grafik denetleyicisidir; scriptin bağımlılığı değildir.
 
-## Geliştirme ortamındaki gerçek sonuçlar
+## Ubuntu labından paylaşılan sonuçlar (14 Kasım 2026)
+
+Öğrencinin paylaştığı terminal kayıtlarında Ubuntu 26.04.1 LTS,
+`7.0.0-30-generic` kernel ve `x86_64` mimarisi görülüyor. Metin raporu ve
+JSON çalıştırıldı; ilk JSON çıktısı ayrıştırılarak geçerli olduğu doğrulandı.
+İlk çalıştırmada `inxi` eksikti. Kurulumdan sonraki metin raporunda
+`Collection: complete` ve altı komutun tamamında `ok` görüldü.
+
+197 servis listelendi; `systemd-networkd-wait-online.service` başarısız olarak
+gösterildi. `complete`, tüm verilerin toplandığı anlamındadır; başarısız servis
+olmadığını söylemez. Bu bulgu raporun tespit ettiği lab durumudur.
+
+İlk genel kontrolde Python 3.14 venv/ensurepip eksikliği test hazırlığını
+engelledi. `python3.14-venv` kurulup ortam yeniden oluşturulduktan sonraki çıktı:
+
+- Android/lab: **195 passed, 1 failed, 2 skipped**. Tek hata
+  `test_web_ui.py::test_lab_start_requires_a_previewed_plan` (400/409).
+  OS-16 dosyasıyla ilgili başarısız test listelenmiyor.
+- Source Lab: **176 passed**; Cleanup reference: **35 test, OK**.
+- Cleanup engine: **228 test; 4 failure, 5 error**; relocation ve safety testleri.
+- Örnek analiz ve **71 kabuk scriptinin** sözdizimi kontrolü geçti.
+- Cargo, lat ve dashboard kontrolleri ilgili araç/bağımlılıklar olmadığı için atlandı.
+- Runner özeti: **4 passed, 2 failed, 3 skipped**. Bunlar kontrol aşaması
+  sayılarıdır; tek tek test sayıları değildir. Genel kontrol henüz temiz değil.
+
+Bu kayıtlar çalışan Linux labından metin kanıtıdır; 2–4 dakikalık video henüz yok.
+
+## Ayrı geliştirme ortamı ve ana dal karşılaştırması
 
 Linux x86_64 / Python 3.12 test ortamında metin ve JSON çalıştırıldı.
 `uname`, `free`, `df` başarılı; `lsb_release` ve `inxi` kurulu değil;
