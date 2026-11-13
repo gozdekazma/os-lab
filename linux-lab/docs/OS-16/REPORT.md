@@ -37,10 +37,12 @@ eksik görünen `inxi` kurulduktan sonra bütün komutlar `ok`, veri toplama dur
 `systemd-networkd-wait-online.service` servisini gösterdi.
 
 Test hazırlığında eksik `python3.14-venv` paketi nedeniyle sanal ortam
-oluşturulamıyordu; paket kurularak bu aşama düzeltildi. Son genel kontrolde
+oluşturulamıyordu; paket kurularak bu aşama düzeltildi.
+OS-16'nın kendi testleri aynı Ubuntu labında ayrıca çalıştırıldı ve
+**21 passed in 0.02s** sonucu alındı. Genel kontrolde
 Android/lab grubunda 195 test geçti, web-ui testinde 1 hata kaldı; Source Lab'da
 176 test geçti. Cleanup Lab'ın relocation/safety testlerinde de hatalar kaldı.
-OS-16'ya ait başarısız test listelenmedi. Ayrıntılar [VERIFY.md](VERIFY.md) içindedir;
+OS-16'nın 21 testinin tamamı geçti. Ayrıntılar [VERIFY.md](VERIFY.md) içindedir;
 genel repo kontrolünün tamamen geçtiği iddia edilmemektedir.
 
 ## Destek ve kalan öğrenci değerlendirmesi
