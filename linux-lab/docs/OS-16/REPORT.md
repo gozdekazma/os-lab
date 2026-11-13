@@ -45,14 +45,15 @@ Android/lab grubunda 195 test geçti, web-ui testinde 1 hata kaldı; Source Lab'
 OS-16'nın 21 testinin tamamı geçti. Ayrıntılar [VERIFY.md](VERIFY.md) içindedir;
 genel repo kontrolünün tamamen geçtiği iddia edilmemektedir.
 
-## Destek ve kalan öğrenci değerlendirmesi
+## Kişisel öğrenme değerlendirmesi
 
-Kod, testler ve belge taslağı ChatGPT desteğiyle hazırlanmıştır. Bu bölüm kişisel
-öğrenme beyanı yerine geçmez. Yukarıdaki gözlemler paylaşılan gerçek terminal
-kayıtlarına dayanır. Gözde aşağıdaki alanları kendi deneyimine göre tamamlamalı
-ve metni gözden geçirmelidir:
+Fork işlemini Keyvan hocanın derste gösterdiği adımlardan öğrenerek os-lab projesinin bir kopyasını kendi GitHub hesabıma aldım. Bu projede ayrı bir dal üzerinde çalışmanın amacını ve hazırlanan aracı Linux ortamında test ederek sonuçlarını kontrol etmeyi öğrendim. Commit ile değişikliklerin kaydedildiğini, push ile GitHub’a gönderildiğini ve Pull Request ile ana projeye eklenmek üzere incelemeye sunulduğunu öğrendim.
 
-- Git/PR sürecinde öğrendiğim şey ve bunu nasıl kullandığım: **henüz yazılmadı**.
+## Destek ve kanıt videosu
+
+Kod, testler ve belge hazırlığında ChatGPT desteği kullanılmıştır.
+Yukarıdaki gözlemler paylaşılan gerçek terminal kayıtlarına dayanır.
+
 - 2–4 dakikalık kanıt videosu: **henüz eklenmedi**.
 
 Tekrar çalıştırma komutları ve video sırası [VERIFY.md](VERIFY.md) içindedir.
