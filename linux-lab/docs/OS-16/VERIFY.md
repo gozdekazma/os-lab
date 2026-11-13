@@ -58,6 +58,15 @@ JSON çalıştırıldı; ilk JSON çıktısı ayrıştırılarak geçerli olduğ
 İlk çalıştırmada `inxi` eksikti. Kurulumdan sonraki metin raporunda
 `Collection: complete` ve altı komutun tamamında `ok` görüldü.
 
+OS-16'nın kendi testleri aynı Ubuntu labında ayrıca çalıştırıldı:
+
+```text
+.venv-test/bin/python -m pytest android-lab/lab/tests/test_server_firstlook.py -q
+21 passed in 0.02s
+```
+
+Bu sonuç, 14 Kasım 2026'da paylaşılan terminal çıktısıyla doğrulandı.
+
 197 servis listelendi; `systemd-networkd-wait-online.service` başarısız olarak
 gösterildi. `complete`, tüm verilerin toplandığı anlamındadır; başarısız servis
 olmadığını söylemez. Bu bulgu raporun tespit ettiği lab durumudur.
