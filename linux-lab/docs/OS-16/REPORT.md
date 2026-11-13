@@ -1,7 +1,9 @@
 # OS-16 — Sunucuya ilk bakış raporu
 
-**Öğrenci:** Gözde Kazma (@gozdekazma)  
-**Ders:** MYO203 — Açık Kaynak İşletim Sistemleri  
+**Öğrenci:** Gözde Kazma (@gozdekazma)
+
+**Ders:** MYO203 — Açık Kaynak İşletim Sistemleri
+
 **Rezervasyon:** [#113](https://github.com/keyvanarasteh/os-lab/pull/113)
 
 ## Yapılan çalışma
