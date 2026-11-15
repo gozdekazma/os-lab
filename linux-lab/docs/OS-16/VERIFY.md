@@ -84,7 +84,8 @@ engelledi. `python3.14-venv` kurulup ortam yeniden oluşturulduktan sonraki çı
 - Runner özeti: **4 passed, 2 failed, 3 skipped**. Bunlar kontrol aşaması
   sayılarıdır; tek tek test sayıları değildir. Genel kontrol henüz temiz değil.
 
-Bu kayıtlar çalışan Linux labından metin kanıtıdır; 2–4 dakikalık video henüz yok.
+Bu kayıtlar çalışan Linux labından metin kanıtıdır. Kanıt videosu:
+[OS-16 lab ve Git/PR akışı](https://gofile.io/d/DfaHLeoN).
 
 ## Ayrı geliştirme ortamı ve ana dal karşılaştırması
 
