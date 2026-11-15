@@ -54,6 +54,6 @@ Fork işlemini Keyvan hocanın derste gösterdiği adımlardan öğrenerek os-la
 Kod, testler ve belge hazırlığında ChatGPT desteği kullanılmıştır.
 Yukarıdaki gözlemler paylaşılan gerçek terminal kayıtlarına dayanır.
 
-- 2–4 dakikalık kanıt videosu: **henüz eklenmedi**.
+- Kanıt videosu: [OS-16 lab ve Git/PR akışı](https://gofile.io/d/DfaHLeoN).
 
 Tekrar çalıştırma komutları ve video sırası [VERIFY.md](VERIFY.md) içindedir.
