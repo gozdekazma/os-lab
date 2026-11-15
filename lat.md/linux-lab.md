@@ -43,17 +43,24 @@ changing the system or requiring sudo.
 
 It runs fixed argument lists for uname, lsb_release, inxi (CPU only),
 free, local df and systemctl service listing, with locale-independent parsing and
-per-command timeouts. It needs only Python's standard library and no sudo.
+per-command timeouts. Each subprocess call has literal arguments and disables
+the shell; unknown command names are rejected. It needs only Python's standard
+library and no sudo.
 
 Readable text and JSON expose kernel/architecture, distro, CPU, memory bytes,
 local mount usage and loaded service states. An architecture note distinguishes
 kernel names from distribution package names. Missing tools, failed commands,
 unrecognized output and timeouts stay explicit; unavailable service data is null,
 not an empty healthy list. Exit 0 means report generation, not a health verdict.
+Empty or unknown service states and malformed distro/CPU fields produce partial
+reports. Zero-sized disks may have null usage percentages. ASCII-only stdout
+uses character escapes; JSON preserves the original values on decoding.
 Nothing is installed, changed, automatically saved or sent over the network.
 
 [[android-lab/lab/tests/test_server_firstlook.py]] covers normal output, missing
-tools, timeouts, malformed tables, failed/non-systemd services, JSON and CLI errors.
+tools, timeouts, malformed tables, failed/non-systemd services, empty/unknown
+service states, distro/CPU validation, zero-sized disks, ASCII stdout, fixed
+command execution, JSON and CLI errors.
 [[linux-lab/docs/OS-16/VERIFY.md]] describes lab reproduction and evidence capture.
 
 ## Why qemux/qemu
