@@ -9,11 +9,12 @@ import os
 import platform
 import re
 import subprocess
+import sys
 
 
 COMMANDS = {
     "uname": ["uname", "-srm"],
-    "lsb_release": ["lsb_release", "-ds"],
+    "lsb_release": ["lsb_release", "-d"],
     "inxi": ["inxi", "-C", "-c", "0"],
     "free": ["free", "-b"],
     "df": ["df", "-P", "-k", "-l"],
@@ -28,14 +29,35 @@ def clean_text(text):
     return "".join(c for c in text if c in "\n\t" or c.isprintable()).strip()
 
 
-def run_command(argv, timeout):
+def execute_fixed_command(name, options):
+    """Only literal argument lists reach subprocess; no caller-supplied argv."""
+    if name == "uname":
+        return subprocess.run(["uname", "-srm"], **options)
+    if name == "lsb_release":
+        return subprocess.run(["lsb_release", "-d"], **options)
+    if name == "inxi":
+        return subprocess.run(["inxi", "-C", "-c", "0"], **options)
+    if name == "free":
+        return subprocess.run(["free", "-b"], **options)
+    if name == "df":
+        return subprocess.run(["df", "-P", "-k", "-l"], **options)
+    if name == "systemctl":
+        return subprocess.run(["systemctl", "--no-pager", "--plain", "list-units",
+                               "--type=service", "--all", "--no-legend"], **options)
+    raise ValueError("Unknown diagnostic command.")
+
+
+def run_command(name, timeout):
+    if not isinstance(name, str) or name not in COMMANDS:
+        raise ValueError("Unknown diagnostic command.")
+    argv = COMMANDS[name]
     result = {"command": argv, "status": "ok", "returncode": None,
               "stdout": "", "stderr": ""}
     env = dict(os.environ, LC_ALL="C", LANG="C", SYSTEMD_COLORS="0")
     try:
-        proc = subprocess.run(argv, capture_output=True, text=True,
-                              encoding="utf-8", errors="replace",
-                              timeout=timeout, env=env, check=False)
+        proc = execute_fixed_command(name, dict(capture_output=True, text=True,
+                                     encoding="utf-8", errors="replace", shell=False,
+                                     timeout=timeout, env=env, check=False))
         result.update(returncode=proc.returncode,
                       stdout=clean_text(proc.stdout), stderr=clean_text(proc.stderr))
         if proc.returncode != 0:
@@ -54,6 +76,20 @@ def parse_uname(text):
     if len(fields) != 3:
         raise ValueError("Expected kernel name, release and architecture from uname -srm.")
     return dict(zip(("kernel", "release", "architecture"), fields))
+
+
+def parse_distribution(text):
+    match = re.fullmatch(r"Description:[ \t]+(\S[^\n]*)", text.strip())
+    if not match:
+        raise ValueError("Unrecognized lsb_release -d description.")
+    return match.group(1).strip()
+
+
+def parse_hardware(text):
+    if not (re.search(r"(?m)^\s*CPU:\s*\S", text)
+            and re.search(r"\bmodel:[ \t]*\S", text)):
+        raise ValueError("Unrecognized inxi CPU report (CPU/model fields missing).")
+    return text
 
 
 def parse_memory(text):
@@ -76,15 +112,17 @@ def parse_disks(text):
     for line in lines[1:]:
         if not line.strip():
             continue
-        match = re.fullmatch(r"(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)%\s+(.+)", line)
+        match = re.fullmatch(r"(.+?)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+%|-)\s+(.+)", line)
         if not match:
             raise ValueError("Unrecognized df -P -k -l row.")
         device, size, used, available, percent, mount = match.groups()
+        if percent == "-" and int(size) != 0:
+            raise ValueError("Unavailable df capacity is only valid for zero-sized filesystems.")
         disks.append({"filesystem": device, "mountpoint": mount,
                       "total_bytes": int(size) * 1024,
                       "used_bytes": int(used) * 1024,
                       "available_bytes": int(available) * 1024,
-                      "used_percent": int(percent)})
+                      "used_percent": None if percent == "-" else int(percent[:-1])})
     if not disks:
         raise ValueError("df returned no local filesystems.")
     return disks
@@ -92,13 +130,20 @@ def parse_disks(text):
 
 def parse_services(text):
     units = []
+    load_states = {"loaded", "error", "not-found", "bad-setting", "masked", "merged", "stub"}
+    active_states = {"active", "reloading", "inactive", "failed", "activating",
+                     "deactivating", "maintenance", "refreshing"}
     for line in text.splitlines():
         if not line.strip():
             continue
         fields = line.split(None, 4)
         if len(fields) < 4 or not fields[0].endswith(".service"):
             raise ValueError("Unrecognized systemctl service row.")
+        if fields[1] not in load_states or fields[2] not in active_states:
+            raise ValueError("Unrecognized systemctl load/active state.")
         units.append(dict(zip(("unit", "load", "active", "sub"), fields[:4])))
+    if not units:
+        raise ValueError("systemctl returned no service data.")
     return {"units": units, "failed": [u["unit"] for u in units if u["active"] == "failed"]}
 
 
@@ -116,7 +161,7 @@ def architecture_note(arch):
 
 
 def collect_report(timeout=5.0):
-    checks = {name: run_command(argv, timeout) for name, argv in COMMANDS.items()}
+    checks = {name: run_command(name, timeout) for name in COMMANDS}
 
     def parsed(name, parser):
         check = checks[name]
@@ -132,19 +177,16 @@ def collect_report(timeout=5.0):
     memory = parsed("free", parse_memory)
     disks = parsed("df", parse_disks)
     services = parsed("systemctl", parse_services)
-    distro = checks["lsb_release"]
-    hardware = checks["inxi"]
-    for check in (distro, hardware):
-        if check["status"] == "ok" and not check["stdout"]:
-            check.update(status="parse-error", stderr="Command returned an empty report.")
+    distro = parsed("lsb_release", parse_distribution)
+    hardware = parsed("inxi", parse_hardware)
     return {
         "schema_version": 1,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "complete": all(c["status"] == "ok" for c in checks.values()),
         "system": system,
-        "distribution": distro["stdout"] if distro["status"] == "ok" else None,
+        "distribution": distro,
         "architecture_note": architecture_note(system["architecture"] if system else None),
-        "hardware": hardware["stdout"] if hardware["status"] == "ok" else None,
+        "hardware": hardware,
         "memory": memory, "disks": disks, "services": services, "checks": checks,
     }
 
@@ -170,7 +212,9 @@ def render_text(report):
     lines += ["", "LOCAL DISKS"]
     if report["disks"]:
         for disk in report["disks"]:
-            lines.append(f"{disk['mountpoint']}: {disk['used_percent']}% used, "
+            usage = ("usage unavailable" if disk['used_percent'] is None
+                     else f"{disk['used_percent']}% used")
+            lines.append(f"{disk['mountpoint']}: {usage}, "
                          f"{disk['available_bytes'] / 2**30:.2f} GiB available "
                          f"({disk['filesystem']})")
     else:
@@ -206,7 +250,9 @@ def main(argv=None):
     if platform.system() != "Linux":
         parser.error("run this tool inside your Linux lab/VM")
     report = collect_report(args.timeout)
-    print(json.dumps(report, indent=2, ensure_ascii=False) if args.json else render_text(report))
+    output = json.dumps(report, indent=2, ensure_ascii=True) if args.json else render_text(report)
+    encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
+    print(output.encode(encoding, errors="backslashreplace").decode(encoding))
     return 0
 
 
