@@ -45,10 +45,27 @@ lat check
 ```
 
 Testler sentetik komut çıktıları kullanır; ağı veya gerçek servisleri değiştirmez.
-Beklenen OS-16 sonucu: `21 passed`. Repo runner'ı pytest yoksa `.venv-test`
+Beklenen güncel OS-16 sonucu: `41 passed`. Repo runner'ı pytest yoksa `.venv-test`
 oluşturabilir; o durumda ilk komutta `.venv-test/bin/python` kullanılabilir.
 Eksik komut, timeout, izin hatası, bozuk çıktı, başarısız servis ve systemd'siz
 ortam senaryoları test edilir. `lat` grafik denetleyicisidir; scriptin bağımlılığı değildir.
+
+## İnceleme sonrası ek doğrulama (15 Kasım 2026)
+
+Geliştirme ortamında inceleme bulguları için eklenen testlerle **41 passed in
+0.06s** elde edildi. Bu yeni sonuç öğrencinin Ubuntu VM kaydı değildir;
+aşağıdaki 21 testlik VM ve video kayıtları önceki sürüme aittir.
+
+- Altı sistem komutu doğrudan sabit argümanlarla, `shell=False` ile çalışır;
+  bilinmeyen komut adları çalıştırılmadan reddedilir.
+- `lsb_release -d` çıktısının `Description:` etiketi ve inxi CPU/model alanları
+  doğrulanır. Boş/bozuk çıktılar `parse-error` ve `complete: false` üretir.
+- Boş servis listesi veya tanınmayan load/active durumu sağlıklı boş liste
+  yerine `services: null` ve `parse-error` üretir.
+- Sıfır boyutlu bir dosya sisteminde df kullanım yüzdesi `-` olabilir;
+  JSON'da bu değer `null`, metinde `usage unavailable` olur. Diğer diskler korunur.
+- ASCII çıktı ortamında Unicode karakterleri kaçış dizileriyle gösterilir;
+  JSON yeniden ayrıştırıldığında özgün karakterler korunur.
 
 ## Ubuntu labından paylaşılan sonuçlar (14 Kasım 2026)
 
